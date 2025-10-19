@@ -1,3 +1,4 @@
+# Default deny in linkerd namespace
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -5,5 +6,36 @@ metadata:
   namespace: linkerd
 spec:
   podSelector: {}
-  policyTypes: ["Ingress","Egress"]
+  policyTypes: ["Ingress", "Egress"]
+
+---
+# Allow the issuer Job to reach Vault (48.217.51.59:8200), kube-apiserver (34.9.235.222:443) and DNS
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-vault-and-apiserver-egress-for-issuer-sync
+  namespace: linkerd
+spec:
+  podSelector:
+    matchLabels:
+      app: vault-issuer-presync
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 48.217.51.59/32   # Vault
+      ports:
+        - protocol: TCP
+          port: 8200
+    - to:
+        - ipBlock:
+            cidr: 34.9.235.222/32   # k8s API server (from your kubeconfig)
+      ports:
+        - protocol: TCP
+          port: 443
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
 

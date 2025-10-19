@@ -3,25 +3,25 @@ kind: Application
 metadata:
   name: linkerd-viz
   namespace: argocd
-  labels:
-    component: observability
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
 spec:
   project: platform-tools
-  source:
-    repoURL: https://helm.linkerd.io/stable
-    chart: linkerd-viz
-    targetRevision: 30.8.2
-    helm:
-      releaseName: linkerd-viz
   destination:
     server: https://kubernetes.default.svc
     namespace: linkerd-viz
+  sources:
+    - repoURL: https://helm.linkerd.io/stable
+      chart: linkerd-viz
+      targetRevision: 30.8.2
+      helm:
+        valueFiles:
+          - $values/values/values-dev.yaml
+    - repoURL: https://github.com/nolet7/helm
+      targetRevision: HEAD
+      ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ApplyOutOfSyncOnly=true
+

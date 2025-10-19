@@ -3,20 +3,22 @@ kind: Application
 metadata:
   name: linkerd-control-plane-staging
   namespace: argocd
-  annotations:
-    avp.kubernetes.io/engine: "vault"
-    avp.kubernetes.io/path: "kv"
-    avp.kubernetes.io/vault-addr: "http://48.217.51.59:8200"
 spec:
+  project: platform-tools
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: linkerd
   sources:
     - repoURL: https://helm.linkerd.io/stable
       chart: linkerd-control-plane
-      targetRevision: 1.16.11
+      targetRevision: 30.8.2
       helm:
-        releaseName: linkerd
         valueFiles:
-          - "$valuesRepo/values/values-stage.yaml"
-    - repoURL: https://github.com/nolet7/helm.git
-      targetRevision: main
-      ref: valuesRepo
-
+          - $values/values/values-stage.yaml
+    - repoURL: https://github.com/nolet7/helm
+      targetRevision: HEAD
+      ref: values
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

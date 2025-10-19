@@ -3,35 +3,27 @@ kind: Application
 metadata:
   name: linkerd-control-plane
   namespace: argocd
-  labels:
-    component: control-plane
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
-    # AVP annotations (render-time inject from Vault KV)
-    avp.kubernetes.io/engine: "vault"
-    avp.kubernetes.io/path: "kv"
-    avp.kubernetes.io/vault-addr: "http://48.217.51.59:8200"
 spec:
   project: platform-tools
-  sources:
-    - repoURL: https://helm.linkerd.io/stable
-      chart: linkerd-control-plane
-      targetRevision: 1.16.11
-      helm:
-        releaseName: linkerd
-        valueFiles:
-          - "$valuesRepo/values/values-dev.yaml"   # dev by default; overlays swap this
-    - repoURL: https://github.com/nolet7/helm.git
-      targetRevision: main
-      ref: valuesRepo
   destination:
     server: https://kubernetes.default.svc
     namespace: linkerd
+  sources:
+    # Helm chart
+    - repoURL: https://helm.linkerd.io/stable
+      chart: linkerd-control-plane
+      targetRevision: 30.8.2
+      helm:
+        valueFiles:
+          - $values/values/values-dev.yaml
+    # External values repo (ref name must match $values above)
+    - repoURL: https://github.com/nolet7/helm
+      targetRevision: HEAD
+      ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ApplyOutOfSyncOnly=true
 
