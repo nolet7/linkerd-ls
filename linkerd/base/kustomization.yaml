@@ -1,6 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: linkerd
 
 resources:
   - namespace.yaml
@@ -8,6 +7,7 @@ resources:
   - rbac.yaml
   - rolebindings.yaml
   - network-policies.yaml
+  - network-policy-allow-vault-apiserver-egress.yaml
   - vault-issuer-presync-job.yaml
   - linkerd-control-plane-app.yaml
   - linkerd-viz-app.yaml
