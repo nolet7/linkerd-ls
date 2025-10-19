@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: linkerd-viz
+  namespace: argocd
+  labels:
+    component: observability
+spec:
+  project: platform-tools
+  source:
+    repoURL: https://helm.linkerd.io/stable
+    chart: linkerd-viz
+    targetRevision: 30.6.3
+    helm:
+      releaseName: linkerd-viz
+      valuesObject:
+        grafana:
+          enabled: true
+        prometheus:
+          enabled: true
+        tap:
+          enabled: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: linkerd-viz
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

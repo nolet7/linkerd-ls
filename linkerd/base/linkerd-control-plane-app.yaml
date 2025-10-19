@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: linkerd-control-plane
+  namespace: argocd
+  labels:
+    component: control-plane
+spec:
+  project: platform-tools
+  sources:
+    - repoURL: https://helm.linkerd.io/stable
+      chart: linkerd-control-plane
+      targetRevision: 1.16.11
+      helm:
+        releaseName: linkerd
+        valueFiles:
+          - "$valuesRepo/helm-charts/CHARTS/linkerd/dev-values.yaml"
+    - repoURL: https://github.com/nolet7/helm.git
+      targetRevision: main
+      ref: valuesRepo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: linkerd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
