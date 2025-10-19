@@ -14,7 +14,7 @@ spec:
       helm:
         releaseName: linkerd
         valueFiles:
-          - "$valuesRepo/helm/values/dev-values.yaml"
+          - "$valuesRepo/values/values-dev.yaml"
     - repoURL: https://github.com/nolet7/helm.git
       targetRevision: main
       ref: valuesRepo

@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: linkerd-vault-agent-template
+  namespace: linkerd
+data:
+  vault-agent-config.hcl: |
+    exit_after_auth = false
+    pid_file = "/tmp/pidfile"
+
+    auto_auth {
+      method "kubernetes" {
+        mount_path = "auth/kubernetes"
+        config = {
+          role = "linkerd"
+        }
+      }
+
+      sink "file" {
+        config = {
+          path = "/vault/.token"
+        }
+      }
+    }
+
+    template {
+      source      = "/vault/templates/issuer.tpl"
+      destination = "/vault/secrets/issuer.yaml"
+    }
+
+  issuer.tpl: |
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: linkerd-identity-issuer
+      namespace: linkerd
+    type: kubernetes.io/tls
+    data:
+      tls.crt: {{ with secret "secret/platform-tools/linkerd" }}{{ .Data.data.issuer_crt | base64Encode }}{{ end }}
+      tls.key: {{ with secret "secret/platform-tools/linkerd" }}{{ .Data.data.issuer_key | base64Encode }}{{ end }}
+

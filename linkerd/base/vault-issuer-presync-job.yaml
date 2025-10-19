@@ -1,0 +1,67 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: linkerd-vault-issuer-sync
+  namespace: linkerd
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      serviceAccountName: linkerd-cert-sync
+      restartPolicy: Never
+      volumes:
+        - name: work
+          emptyDir: {}
+      containers:
+        - name: vault
+          image: curlimages/curl:8.10.1
+          env:
+            - name: VAULT_ADDR
+              value: "http://48.217.51.59:8200"
+          volumeMounts:
+            - name: work
+              mountPath: /work
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              set -eu
+              echo "==> Login to Vault via Kubernetes auth role linkerd-cert-sync"
+              SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+              LOGIN=$(curl -sS --request POST \
+                --data "{\"role\":\"linkerd-cert-sync\",\"jwt\":\"${SA_TOKEN}\"}" \
+                ${VAULT_ADDR}/v1/auth/kubernetes/login)
+              VAULT_TOKEN=$(printf '%s' "$LOGIN" | sed -n 's/.*"client_token":"\([^"]*\)".*/\1/p')
+
+              echo "==> Issue Linkerd issuer from pki_int/issue/linkerd-issuer"
+              ISSUE=$(curl -sS \
+                --header "X-Vault-Token: ${VAULT_TOKEN}" \
+                --request POST \
+                --data '{"common_name":"identity.linkerd.cluster.local","ttl":"720h"}' \
+                ${VAULT_ADDR}/v1/pki_int/issue/linkerd-issuer)
+
+              printf '%s' "$ISSUE" | sed -n 's/.*"certificate":"\([^"]*\)".*/\1/p' | sed 's/\\n/\n/g' > /work/issuer.crt
+              printf '%s' "$ISSUE" | sed -n 's/.*"private_key":"\([^"]*\)".*/\1/p' | sed 's/\\n/\n/g' > /work/issuer.key
+
+              echo "==> Fetch Root CA (public) for visibility (values inject at render via AVP)"
+              curl -sS ${VAULT_ADDR}/v1/pki_root/ca/pem > /work/trust-anchor.crt
+        - name: kubectl
+          image: bitnami/kubectl:1.33
+          volumeMounts:
+            - name: work
+              mountPath: /work
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              set -eu
+              kubectl -n linkerd create secret tls linkerd-identity-issuer \
+                --cert=/work/issuer.crt --key=/work/issuer.key \
+                --dry-run=client -o yaml | kubectl apply -f -
+
+              kubectl -n linkerd create configmap linkerd-identity-trust-roots \
+                --from-file=ca-bundle.crt=/work/trust-anchor.crt \
+                --dry-run=client -o yaml | kubectl apply -f -
+

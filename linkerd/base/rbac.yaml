@@ -1,17 +1,3 @@
-# --- Platform Admin Role ---
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: linkerd-admin
-  namespace: linkerd
-rules:
-  - apiGroups: ["", "apps", "extensions", "networking.k8s.io"]
-    resources: ["pods", "deployments", "services", "secrets", "configmaps"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-
----
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -19,54 +5,26 @@ metadata:
   namespace: linkerd
 subjects:
   - kind: User
-    name: admin@webforx.local
+    name: admin
     apiGroup: rbac.authorization.k8s.io
 roleRef:
-  kind: Role
-  name: linkerd-admin
+  kind: ClusterRole
+  name: admin
   apiGroup: rbac.authorization.k8s.io
-
-# --- Developer Role ---
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: linkerd-developer
-  namespace: linkerd
-rules:
-  - apiGroups: ["", "apps"]
-    resources: ["pods", "deployments", "services"]
-    verbs: ["get", "list", "watch"]
-
----
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: linkerd-developer-binding
+  name: linkerd-dev-binding
   namespace: linkerd
 subjects:
   - kind: User
-    name: developer@webforx.local
+    name: developer
     apiGroup: rbac.authorization.k8s.io
 roleRef:
-  kind: Role
-  name: linkerd-developer
+  kind: ClusterRole
+  name: edit
   apiGroup: rbac.authorization.k8s.io
-
-# --- Tester Role ---
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: linkerd-tester
-  namespace: linkerd
-rules:
-  - apiGroups: [""]
-    resources: ["pods", "services"]
-    verbs: ["get", "list"]
-
----
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -75,37 +33,9 @@ metadata:
   namespace: linkerd
 subjects:
   - kind: User
-    name: tester@webforx.local
+    name: tester
     apiGroup: rbac.authorization.k8s.io
 roleRef:
-  kind: Role
-  name: linkerd-tester
-  apiGroup: rbac.authorization.k8s.io
-
-# --- Executive Engineer (EE) Role ---
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: linkerd-ee
-  namespace: linkerd
-rules:
-  - apiGroups: [""]
-    resources: ["pods", "services"]
-    verbs: ["get", "list", "watch"]
-
----
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: linkerd-ee-binding
-  namespace: linkerd
-subjects:
-  - kind: User
-    name: ee@webforx.local
-    apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: Role
-  name: linkerd-ee
+  kind: ClusterRole
+  name: view
   apiGroup: rbac.authorization.k8s.io

@@ -1,5 +1,3 @@
----
----
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -7,30 +5,5 @@ metadata:
   namespace: linkerd
 spec:
   podSelector: {}
-  policyTypes:
-    - Ingress
-    - Egress
----
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-control-plane
-  namespace: linkerd
-spec:
-  podSelector:
-    matchLabels:
-      linkerd.io/control-plane-component: controller
-  policyTypes:
-    - Ingress
-    - Egress
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              linkerd.io/control-plane-ns: linkerd
-  egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              linkerd.io/control-plane-ns: linkerd
+  policyTypes: ["Ingress","Egress"]
+

@@ -3,25 +3,19 @@ kind: Application
 metadata:
   name: linkerd-control-plane-dev
   namespace: argocd
-  labels:
-    environment: dev
+  annotations:
+    avp.kubernetes.io/engine: "vault"
+    avp.kubernetes.io/path: "kv"
+    avp.kubernetes.io/vault-addr: "http://48.217.51.59:8200"
 spec:
-  project: platform-tools
   sources:
     - repoURL: https://helm.linkerd.io/stable
       chart: linkerd-control-plane
       targetRevision: 1.16.11
       helm:
-        releaseName: linkerd-dev
+        releaseName: linkerd
         valueFiles:
-          - "$valuesRepo/helm/values/dev-values.yaml"
+          - "$valuesRepo/values/values-dev.yaml"
     - repoURL: https://github.com/nolet7/helm.git
       targetRevision: main
       ref: valuesRepo
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: linkerd
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true

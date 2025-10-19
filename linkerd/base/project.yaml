@@ -1,18 +1,14 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: platform-tools
   namespace: argocd
 spec:
-  description: "Platform-level service mesh & observability tools"
-  sourceRepos:
-    - '*'
+  description: "Service mesh & observability (Linkerd)"
+  sourceRepos: ["*"]
   destinations:
-    - namespace: '*'
+    - namespace: "*"
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
-  orphanedResources:
-    warn: true
+    - group: "*"
+      kind: "*"
