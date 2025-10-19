@@ -1,5 +1,4 @@
 # --- Platform Admin Role ---
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -10,7 +9,6 @@ rules:
     resources: ["pods", "deployments", "services", "secrets", "configmaps"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
----
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -27,7 +25,6 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 
 # --- Developer Role ---
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -38,7 +35,6 @@ rules:
     resources: ["pods", "deployments", "services"]
     verbs: ["get", "list", "watch"]
 
----
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -55,7 +51,6 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 
 # --- Tester Role ---
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -66,7 +61,6 @@ rules:
     resources: ["pods", "services"]
     verbs: ["get", "list"]
 
----
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -83,7 +77,6 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 
 # --- Executive Engineer (EE) Role ---
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -94,7 +87,6 @@ rules:
     resources: ["pods", "services"]
     verbs: ["get", "list", "watch"]
 
----
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

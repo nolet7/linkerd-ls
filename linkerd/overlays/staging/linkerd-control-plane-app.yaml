@@ -14,7 +14,7 @@ spec:
       helm:
         releaseName: linkerd-staging
         valueFiles:
-          - "$valuesRepo/helm-charts/CHARTS/linkerd/staging-values.yaml"
+          - "$valuesRepo/helm/values/staging-values.yaml"
     - repoURL: https://github.com/nolet7/helm.git
       targetRevision: main
       ref: valuesRepo
