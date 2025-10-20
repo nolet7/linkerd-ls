@@ -9,9 +9,9 @@ spec:
     server: https://kubernetes.default.svc
     namespace: linkerd
   sources:
-    - repoURL: oci://ghcr.io/linkerd/charts
+    - repoURL: https://helm.linkerd.io/stable
       chart: linkerd-control-plane
-      targetRevision: "2.14.0"
+      targetRevision: "1.16.11"  # matches your repo
       helm:
         valueFiles:
           - $values/values/values-dev.yaml

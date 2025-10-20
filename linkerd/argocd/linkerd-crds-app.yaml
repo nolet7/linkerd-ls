@@ -9,11 +9,9 @@ spec:
     server: https://kubernetes.default.svc
     namespace: linkerd
   source:
-    repoURL: oci://ghcr.io/linkerd/charts
+    repoURL: https://helm.linkerd.io/stable
     chart: linkerd-crds
-    targetRevision: "2.14.0"
-    helm:
-      releaseName: linkerd-crds
+    targetRevision: "1.8.0"
   syncPolicy:
     automated:
       prune: true
