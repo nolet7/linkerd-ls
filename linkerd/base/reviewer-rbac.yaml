@@ -1,0 +1,22 @@
+# base/reviewer-rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault-auth
+  namespace: linkerd
+---
+# Bind the SA to the built-in ClusterRole that allows TokenReview.
+#  roleRef is immutable once created, so we keep the name and roleRef stable.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vault-auth-delegator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+  - kind: ServiceAccount
+    name: vault-auth
+    namespace: linkerd
+

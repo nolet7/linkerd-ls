@@ -4,10 +4,12 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - project.yaml
-  - rbac.yaml
+  - reviewer-rbac.yaml
   - rolebindings.yaml
+  - rbac.yaml
+  - cert-sync-rbac.yaml
   - network-policies.yaml
-  - network-policy-allow-vault-apiserver-egress.yaml
+  - vault-auth-token.yaml
   - vault-issuer-presync-job.yaml
   - linkerd-control-plane-app.yaml
   - linkerd-viz-app.yaml
