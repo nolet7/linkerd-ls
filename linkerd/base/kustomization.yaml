@@ -1,15 +1,14 @@
+# base/kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 resources:
   - namespace.yaml
-  - project.yaml
-  - reviewer-rbac.yaml
   - rolebindings.yaml
   - rbac.yaml
   - cert-sync-rbac.yaml
+  - reviewer-rbac.yaml
   - network-policies.yaml
   - vault-auth-token.yaml
+  - vault-agent-configmap.yaml
   - vault-issuer-presync-job.yaml
-  - linkerd-control-plane-app.yaml
-  - linkerd-viz-app.yaml
+

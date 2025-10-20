@@ -1,22 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: linkerd-control-plane
+  name: linkerd-viz
   namespace: argocd
 spec:
   project: platform-tools
   destination:
     server: https://kubernetes.default.svc
-    namespace: linkerd
+    namespace: linkerd-viz
   sources:
-    # Helm chart
-    - repoURL: https://helm.linkerd.io/stable
-      chart: linkerd-control-plane
-      targetRevision: 30.8.2
+    - repoURL: oci://ghcr.io/linkerd/charts
+      chart: linkerd-viz
+      targetRevision: "2.14.0"
       helm:
         valueFiles:
           - $values/values/values-dev.yaml
-    # External values repo (ref name must match $values above)
     - repoURL: https://github.com/nolet7/helm
       targetRevision: HEAD
       ref: values

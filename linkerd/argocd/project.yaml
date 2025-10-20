@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: platform-tools
+  namespace: argocd
+spec:
+  description: Platform tooling (Linkerd)
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: linkerd
+    - server: https://kubernetes.default.svc
+      namespace: linkerd-viz
+    - server: https://kubernetes.default.svc
+      namespace: kube-system
+  sourceRepos:
+    - oci://ghcr.io/linkerd/charts
+    - https://github.com/nolet7/helm
+  clusterResourceWhitelist:
+    - group: "apiextensions.k8s.io"
+      kind: "CustomResourceDefinition"
+    - group: "linkerd.io"
+      kind: "*"
+    - group: "policy.linkerd.io"
+      kind: "*"
+    - group: "rbac.authorization.k8s.io"
+      kind: "*"
+  namespaceResourceWhitelist:
+    - group: "rbac.authorization.k8s.io"
+      kind: "Role"
+    - group: "rbac.authorization.k8s.io"
+      kind: "RoleBinding"
+    - group: ""
+      kind: "ServiceAccount"
+    - group: ""
+      kind: "Service"
+    - group: ""
+      kind: "ConfigMap"
+    - group: "apps"
+      kind: "Deployment"
+    - group: "admissionregistration.k8s.io"
+      kind: "MutatingWebhookConfiguration"
+    - group: "apiregistration.k8s.io"
+      kind: "APIService"
+

@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: linkerd-crds
+  namespace: argocd
+spec:
+  project: platform-tools
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: linkerd
+  source:
+    repoURL: oci://ghcr.io/linkerd/charts
+    chart: linkerd-crds
+    targetRevision: "2.14.0"
+    helm:
+      releaseName: linkerd-crds
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
